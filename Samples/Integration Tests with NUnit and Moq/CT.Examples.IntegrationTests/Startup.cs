@@ -6,7 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System.Net.Http;
 
-namespace WebApplication1
+namespace CT.Examples.IntegrationTests
 {
     public class Startup
     {

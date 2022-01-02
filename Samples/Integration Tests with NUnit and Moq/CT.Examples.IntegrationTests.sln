@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication1", "WebApplication1\WebApplication1.csproj", "{E25D2609-34A3-41F8-9E76-7006573C9AFD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CT.Examples.IntegrationTests", "CT.Examples.IntegrationTests\CT.Examples.IntegrationTests.csproj", "{E25D2609-34A3-41F8-9E76-7006573C9AFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1.Tests", "WebApplication1.Tests\WebApplication1.Tests.csproj", "{BCA7D820-60FA-4781-A9EB-6158D1A0E712}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CT.Examples.IntegrationTests.Tests", "CT.Examples.IntegrationTests.Tests\CT.Examples.IntegrationTests.Tests.csproj", "{BCA7D820-60FA-4781-A9EB-6158D1A0E712}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

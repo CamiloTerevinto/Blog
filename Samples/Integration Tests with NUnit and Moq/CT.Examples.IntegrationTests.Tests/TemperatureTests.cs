@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using System.Threading.Tasks;
 
-namespace WebApplication1.Tests
+namespace CT.Examples.IntegrationTests.Tests
 {
     [TestFixture]
     public class TemperatureTests : CustomBaseTest

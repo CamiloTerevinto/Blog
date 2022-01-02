@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace WebApplication1
+namespace CT.Examples.IntegrationTests
 {
     public interface ITemperatureApiClient
     {

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 
-namespace WebApplication1.Tests
+namespace CT.Examples.IntegrationTests.Tests
 {
     public class CustomWebApplicationFactory : WebApplicationFactory<Startup>
     {

@@ -17,6 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WebApplication1\WebApplication1.csproj" />
+    <ProjectReference Include="..\CT.Examples.IntegrationTests\CT.Examples.IntegrationTests.csproj" />
   </ItemGroup>
 </Project>

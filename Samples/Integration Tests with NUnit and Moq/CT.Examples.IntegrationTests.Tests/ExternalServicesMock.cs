@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace WebApplication1.Tests
+namespace CT.Examples.IntegrationTests.Tests
 {
     public class ExternalServicesMock
     {

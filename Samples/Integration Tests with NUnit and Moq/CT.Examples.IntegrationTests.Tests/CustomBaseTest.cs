@@ -1,6 +1,6 @@
 ﻿using System.Net.Http;
 
-namespace WebApplication1.Tests
+namespace CT.Examples.IntegrationTests.Tests
 {
     public class CustomBaseTest
     {
