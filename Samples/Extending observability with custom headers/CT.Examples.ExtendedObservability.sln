@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31702.278
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CT.Examples.ExtendedObservability.Gateway", "CT.Examples.ExtendedObservability.Gateway\CT.Examples.ExtendedObservability.Gateway.csproj", "{1BEEF4FA-F61E-4CA9-9CF7-B4227B48D193}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CDAA978A-FA38-4ABD-8CB2-6616134A111F} = {CDAA978A-FA38-4ABD-8CB2-6616134A111F}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CT.Examples.ExtendedObservability.Order.Api", "CT.Examples.ExtendedObservability.Order.Api\CT.Examples.ExtendedObservability.Order.Api.csproj", "{C9FC4406-8F49-48B0-B20C-5228ABDBD6A8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CDAA978A-FA38-4ABD-8CB2-6616134A111F} = {CDAA978A-FA38-4ABD-8CB2-6616134A111F}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CT.Examples.ExtendedObservability.Order.Command", "CT.Examples.ExtendedObservability.Order.Command\CT.Examples.ExtendedObservability.Order.Command.csproj", "{6576B237-B9CE-435B-8AB0-085744A8294E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CDAA978A-FA38-4ABD-8CB2-6616134A111F} = {CDAA978A-FA38-4ABD-8CB2-6616134A111F}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CT.Examples.ExtendedObservability.Customer.Query", "CT.Examples.ExtendedObservability.Customer.Query\CT.Examples.ExtendedObservability.Customer.Query.csproj", "{149A88B9-6562-4727-ACD8-D26B8CB26002}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CDAA978A-FA38-4ABD-8CB2-6616134A111F} = {CDAA978A-FA38-4ABD-8CB2-6616134A111F}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CT.Examples.ExtendedObservability.Extensions", "CT.Examples.ExtendedObservability.Extensions\CT.Examples.ExtendedObservability.Extensions.csproj", "{CDAA978A-FA38-4ABD-8CB2-6616134A111F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1BEEF4FA-F61E-4CA9-9CF7-B4227B48D193}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BEEF4FA-F61E-4CA9-9CF7-B4227B48D193}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BEEF4FA-F61E-4CA9-9CF7-B4227B48D193}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BEEF4FA-F61E-4CA9-9CF7-B4227B48D193}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9FC4406-8F49-48B0-B20C-5228ABDBD6A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9FC4406-8F49-48B0-B20C-5228ABDBD6A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9FC4406-8F49-48B0-B20C-5228ABDBD6A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9FC4406-8F49-48B0-B20C-5228ABDBD6A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6576B237-B9CE-435B-8AB0-085744A8294E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6576B237-B9CE-435B-8AB0-085744A8294E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6576B237-B9CE-435B-8AB0-085744A8294E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6576B237-B9CE-435B-8AB0-085744A8294E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{149A88B9-6562-4727-ACD8-D26B8CB26002}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{149A88B9-6562-4727-ACD8-D26B8CB26002}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{149A88B9-6562-4727-ACD8-D26B8CB26002}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{149A88B9-6562-4727-ACD8-D26B8CB26002}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDAA978A-FA38-4ABD-8CB2-6616134A111F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDAA978A-FA38-4ABD-8CB2-6616134A111F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDAA978A-FA38-4ABD-8CB2-6616134A111F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDAA978A-FA38-4ABD-8CB2-6616134A111F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {339C65C4-7FC2-45FA-8023-47FECFEC1632}
+	EndGlobalSection
+EndGlobal
