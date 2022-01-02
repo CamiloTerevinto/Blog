@@ -1,14 +1,9 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using TerevintoSoftware.AspNetCore.Authentication.ApiKeys.Abstractions;
 
 namespace CT.Examples.CustomApiKeys.Services
 {
-    public interface ICacheService
-    {
-        ValueTask<Guid?> GetClientIdFromApiKey(string apiKey);
-        Task InvalidateApiKey(string apiKey);
-    }
-
-    public class CacheService : ICacheService
+    public class CacheService : IApiKeysCacheService
     {
         private static readonly TimeSpan _cacheKeysTimeToLive = new(1, 0, 0);
 
@@ -21,7 +16,7 @@ namespace CT.Examples.CustomApiKeys.Services
             _clientsService = clientsService;
         }
 
-        public async ValueTask<Guid?> GetClientIdFromApiKey(string apiKey)
+        public async ValueTask<string?> GetOwnerIdFromApiKey(string apiKey)
         {
             if (!_memoryCache.TryGetValue<Dictionary<string, Guid>>("Authentication_ApiKeys", out var internalKeys))
             {
@@ -35,7 +30,7 @@ namespace CT.Examples.CustomApiKeys.Services
                 return null;
             }
 
-            return clientId;
+            return clientId.ToString();
         }
 
         public async Task InvalidateApiKey(string apiKey)

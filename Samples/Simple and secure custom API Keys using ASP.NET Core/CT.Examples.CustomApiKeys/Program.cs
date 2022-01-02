@@ -1,8 +1,11 @@
-using CT.Examples.CustomApiKeys.Middleware;
 using CT.Examples.CustomApiKeys.Services;
 using Microsoft.OpenApi.Models;
+using TerevintoSoftware.AspNetCore.Authentication.ApiKeys;
+using TerevintoSoftware.AspNetCore.Authentication.ApiKeys.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.AddSimpleConsole(options => options.IncludeScopes = true);
 
 // Add services to the container.
 
@@ -36,14 +39,19 @@ builder.Services.AddSwaggerGen(setup =>
 });
 
 builder.Services
-    .AddSingleton<IApiKeyService, ApiKeyService>()
+    .AddDefaultApiKeyGenerator(new ApiKeyGenerationOptions
+    {
+        KeyPrefix = "CT-",
+        ByteCountToGenerate = 32,
+        GenerateUrlSafeKeys = true,
+        LengthOfKey = 36
+    })
+    .AddDefaultClaimsPrincipalFactory()
+    .AddApiKeys(options => { options.InvalidApiKeyLog = (LogLevel.Warning, "Someone attempted to use an invalid API Key: {ApiKey}"); }, true)
     .AddSingleton<IClientsService, InMemoryClientsService>()
     .AddMemoryCache()
-    .AddSingleton<ICacheService, CacheService>();
+    .AddSingleton<IApiKeysCacheService, CacheService>();
 
-builder.Services
-    .AddAuthentication(ApiKeyAuthenticationOptions.DefaultScheme)
-    .AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(ApiKeyAuthenticationOptions.DefaultScheme, null);
 
 var app = builder.Build();
 

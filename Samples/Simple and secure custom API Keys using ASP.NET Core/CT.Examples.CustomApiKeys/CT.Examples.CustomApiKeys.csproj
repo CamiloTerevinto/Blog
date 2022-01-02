@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    <PackageReference Include="TerevintoSoftware.AspNetCore.Authentication.ApiKeys" Version="1.0.2" />
   </ItemGroup>
 
 </Project>
