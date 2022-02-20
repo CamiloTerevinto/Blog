@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CT.Examples.OAuthAuthorizationCodeFlow.Api", "CT.Examples.OAuthAuthorizationCodeFlow.Api\CT.Examples.OAuthAuthorizationCodeFlow.Api.csproj", "{B57E914E-25F4-4DF4-9043-B9BC35DB785C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CT.Examples.OAuthAuthorizationCodeFlow.IdServer", "CT.Examples.OAuthAuthorizationCodeFlow.IdServer\CT.Examples.OAuthAuthorizationCodeFlow.IdServer.csproj", "{B682C3FE-5C16-4F2A-938F-35E90C9C1501}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B57E914E-25F4-4DF4-9043-B9BC35DB785C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B57E914E-25F4-4DF4-9043-B9BC35DB785C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B57E914E-25F4-4DF4-9043-B9BC35DB785C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B57E914E-25F4-4DF4-9043-B9BC35DB785C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B682C3FE-5C16-4F2A-938F-35E90C9C1501}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B682C3FE-5C16-4F2A-938F-35E90C9C1501}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B682C3FE-5C16-4F2A-938F-35E90C9C1501}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B682C3FE-5C16-4F2A-938F-35E90C9C1501}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BFCC57F2-710B-47A8-8964-26EBD8A200C8}
+	EndGlobalSection
+EndGlobal
