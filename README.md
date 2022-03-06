@@ -8,6 +8,7 @@ This repository contains the final samples for the different posts on my blog.
 | [ASP.NET Core integration tests with NUnit and Moq](https://www.camiloterevinto.com/post/asp-net-core-integration-tests-with-nunit-and-moq) | [Sample](/Samples/Integration%20Tests%20with%20NUnit%20and%20Moq) |
 | [Simple and secure custom API Keys using ASP.NET Core](https://www.camiloterevinto.com/post/simple-and-secure-api-keys-using-asp-net-core) | [Sample](https://github.com/CamiloTerevinto/Blog/tree/main/Samples/Simple%20and%20secure%20custom%20API%20Keys%20using%20ASP.NET%20Core) |
 | [OAuth PKCE flow for ASP.NET Core with Swagger](https://www.camiloterevinto.com/post/oauth-pkce-flow-for-asp-net-core-with-swagger) | [Sample](/Samples/OAuth%20PKCE%20flow%20for%20Swagger%20in%20ASP.NET%20Core) |
+| Blog post coming soon | [Sample](/Samples/Offloading%20And%20Scheduling%20With%20Hangfire%20Microservices) |
 
 ## Feedback
 
