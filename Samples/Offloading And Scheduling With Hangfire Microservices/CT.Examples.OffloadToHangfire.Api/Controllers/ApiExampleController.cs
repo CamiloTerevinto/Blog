@@ -14,17 +14,30 @@ namespace CT.Examples.OffloadToHangfire.Api.Controllers
             _apiExampleService = apiExampleService;
         }
 
-        [HttpPost("schedule")]
-        public IActionResult ScheduleCall([FromBody]ApiExampleModel apiExampleModel)
+        [HttpPost("schedule-simple")]
+        public IActionResult ScheduleSimpleCall([FromBody]ScheduleSimpleCallModel model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var jobId = _apiExampleService.ScheduleCall(apiExampleModel);
+            var jobId = _apiExampleService.ScheduleCall(model);
 
             return Ok(new { JobId = jobId });
+        }
+
+        [HttpPost("schedule-recurring")]
+        public IActionResult ScheduleRecurringCall([FromBody] ScheduleRecurringCallModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var recurrenceId = _apiExampleService.ScheduleRecurringCall(model);
+
+            return Ok(new { RecurrenceId = recurrenceId });
         }
 
         [HttpPost("run-something")]

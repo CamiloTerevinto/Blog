@@ -7,19 +7,22 @@ namespace CT.Examples.OffloadToHangfire.Api.Services
 {
     public interface IApiExampleService
     {
-        string ScheduleCall(ApiExampleModel model);
+        string ScheduleCall(ScheduleSimpleCallModel model);
+        string ScheduleRecurringCall(ScheduleRecurringCallModel model);
     }
 
     public class ApiExampleService : IApiExampleService
     {
         private readonly IBackgroundJobClient _backgroundJobClient;
+        private readonly IRecurringJobManager _recurringJobManager;
 
-        public ApiExampleService(IBackgroundJobClient backgroundJobClient)
+        public ApiExampleService(IBackgroundJobClient backgroundJobClient, IRecurringJobManager recurringJobManager)
         {
             _backgroundJobClient = backgroundJobClient;
+            _recurringJobManager = recurringJobManager;
         }
 
-        public string ScheduleCall(ApiExampleModel model)
+        public string ScheduleCall(ScheduleSimpleCallModel model)
         {
             var jobModel = new CallApiExampleData
             {
@@ -30,6 +33,20 @@ namespace CT.Examples.OffloadToHangfire.Api.Services
             var jobId = _backgroundJobClient.Schedule<ICallApiExampleJob>(x => x.Execute(jobModel), TimeSpan.FromSeconds(2));
 
             return jobId;
+        }
+
+        public string ScheduleRecurringCall(ScheduleRecurringCallModel model)
+        {
+            var jobModel = new CallApiExampleData
+            {
+                Url = "http://localhost:5122/example/run-something",
+                SomeOtherImportantData = model.SomeImportantData
+            };
+
+            var recurrenceId = Guid.NewGuid().ToString();
+            _recurringJobManager.AddOrUpdate<ICallApiExampleJob>(recurrenceId, x => x.Execute(jobModel), model.CronExpression);
+
+            return recurrenceId;
         }
     }
 }
