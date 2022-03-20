@@ -17,3 +17,7 @@
 # SQL Server files
 *.ldf
 *.ndf
+
+# Ignore publish profiles
+/Samples/Realtime Charts with SignalR/CT.Examples.RealtimeCharts/Properties
+/Samples/Realtime Charts with SignalR/CT.Examples.RealtimeCharts/local.settings.json

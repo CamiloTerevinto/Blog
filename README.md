@@ -4,6 +4,7 @@ This repository contains the final samples for the different posts on my blog.
 
 | Article      | Sample |
 |--------------|-------:|
+| [Real-time charts with Plotly and Azure SignalR Serverless](https://www.camiloterevinto.com/post/real-time-charts-with-plotly-and-azure-signalr-serverless) | [Sample](/Samples/Realtime%20Charts%20with%20SignalR) |
 | [Simplifying observability and diagnostics in .NET Microservices](https://www.camiloterevinto.com/post/simplifying-observability-and-diagnostics-in-net-microservices-and-distributed-systems) | [Sample](/Samples/Extending%20observability%20with%20custom%20headers) |
 | [ASP.NET Core integration tests with NUnit and Moq](https://www.camiloterevinto.com/post/asp-net-core-integration-tests-with-nunit-and-moq) | [Sample](/Samples/Integration%20Tests%20with%20NUnit%20and%20Moq) |
 | [Simple and secure custom API Keys using ASP.NET Core](https://www.camiloterevinto.com/post/simple-and-secure-api-keys-using-asp-net-core) | [Sample](https://github.com/CamiloTerevinto/Blog/tree/main/Samples/Simple%20and%20secure%20custom%20API%20Keys%20using%20ASP.NET%20Core) |
@@ -14,3 +15,6 @@ This repository contains the final samples for the different posts on my blog.
 
 If you'd like to provide feedback on any of the samples, please feel free to create an issue.  
 I'd also be glad to accept Pull Requests to improve the samples.
+
+## License
+This GitHub repository is licensed through the MIT license, which can be found [here](/LICENSE)

@@ -1,0 +1,107 @@
+﻿<html lang="en" class="h-100">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CT - Real-time plots with Plotly</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" />
+</head>
+<body class="d-flex flex-column h-100">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/api/index">CT.Examples.RealtimeCharts</a>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            <div class="row">
+                <div class="col-auto">
+                    <label for="connected" class="form-label">Connected to WebSockets:</label>
+                </div>
+                <div class="col-auto">
+                    <div id="connected" class="form-check-inline"><b>connected!</b></div>
+                </div>
+            </div>
+
+            <div class="row row-cols-auto col-form-label-lg">
+                <label for="triggerSample">Trigger sample</label>
+                <button type="button" id="triggerSample" onclick="triggerSample()" class="btn btn-primary">Run</button>
+            </div>
+
+            <div id="plot">
+
+            </div>
+        </main>
+    </div>
+    <footer class="footer mt-auto py-3 bg-light">
+        <div class="container">
+            &copy; 2022 - Camilo Terevinto
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@aspnet/signalr@1.0.3/dist/browser/signalr.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.4.2/plotly.min.js'></script>
+    <script>
+        const apiBaseUrl = window.location.origin;
+        const accessToken = "@@ACCESS_TOKEN@@";
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl(apiBaseUrl + '/api', {
+                accessTokenFactory: () => accessToken
+            })
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        connection.on('newMessage', onNewMessage);
+        connection.start()
+            .then(() => {
+                document.getElementById("connected").innerHTML = "<b>connected!</b>";
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById("connected").innerHTML = "<b>connection failed!</b>";
+            });
+
+        let variables = [];
+
+        function onNewMessage(message) {
+            if (variables.length === 0) {
+                for (var i = 0; i < message.length; i++) {
+                    variables.push({
+                        x: [],
+                        y: [],
+                        type: "scatter"
+                    });
+                }
+            }
+
+            for (var i = 0; i < message.length; i++) {
+                variables[i].x.push(message[i].X);
+                variables[i].y.push(message[i].Y);
+            }
+
+            Plotly.newPlot('plot', variables);
+        };
+
+        async function triggerSample() {
+            // reset demo
+            variables = []
+
+            const button = document.getElementById("triggerSample");
+
+            button.hidden = true;
+
+            await fetch(apiBaseUrl + "/api/trigger-events", {
+                method: "POST",
+                mode: "same-origin",
+                headers: {
+                    "Authorization": "Bearer " + accessToken
+                }
+            });
+
+            button.hidden = false;
+        }
+    </script>
+</body>
+</html>
