@@ -29,9 +29,17 @@ namespace CT.Examples.OAuthAuthorizationCodeFlow.IdServer
                     RedirectUris = { "https://localhost:44301/swagger/oauth2-redirect.html" },
                     AllowedCorsOrigins = { "https://localhost:44301" },
                     AllowOfflineAccess = true,
-                    AllowedScopes = { "openid", "profile", "api" }
-
+                    AllowedScopes = { "openid", "profile", "api" },
                 },
+                new Client
+                {
+                    ClientId = "python-nb",
+                    RequireClientSecret = false,
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RedirectUris = { "http://localhost:8888" },
+                    AllowOfflineAccess = true,
+                    AllowedScopes = { "openid", "profile", "api" },
+                }
             };
     }
 }
