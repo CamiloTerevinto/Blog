@@ -7,15 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CT.Examples.SimplifiedCA.Infrastructure\CT.Examples.SimplifiedCA.Infrastructure.csproj" />
+    <ProjectReference Include="..\CT.Examples.SimplifiedCA.Models\CT.Examples.SimplifiedCA.Models.csproj" />
   </ItemGroup>
 
 </Project>
