@@ -1,48 +1,23 @@
 using CT.Examples.CustomApiKeys.Services;
-using Microsoft.OpenApi.Models;
 using TerevintoSoftware.AspNetCore.Authentication.ApiKeys;
 using TerevintoSoftware.AspNetCore.Authentication.ApiKeys.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Logging.AddSimpleConsole(options => options.IncludeScopes = true);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddLocalization(opt => opt.ResourcesPath = "Resources");
 
 builder.Services.AddSwaggerGen(setup =>
 {
-    setup.AddSecurityDefinition(ApiKeyAuthenticationOptions.DefaultScheme, new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header,
-        Name = ApiKeyAuthenticationOptions.HeaderName,
-        Type = SecuritySchemeType.ApiKey
-    });
-
-    setup.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = ApiKeyAuthenticationOptions.DefaultScheme
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
+    setup.AddApiKeySupport();
 });
 
 builder.Services
     .AddDefaultApiKeyGenerator(new ApiKeyGenerationOptions
     {
         KeyPrefix = "CT-",
-        ByteCountToGenerate = 32,
         GenerateUrlSafeKeys = true,
         LengthOfKey = 36
     })
@@ -52,8 +27,13 @@ builder.Services
     .AddMemoryCache()
     .AddSingleton<IApiKeysCacheService, CacheService>();
 
-
 var app = builder.Build();
+
+app.UseRequestLocalization(opt =>
+{
+    opt.AddSupportedCultures("en", "es");
+    opt.AddSupportedUICultures("en", "es");
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
