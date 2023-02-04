@@ -12,7 +12,7 @@ This repository contains the final samples for the different posts on my blog.
 | [Offloading And Scheduling Jobs With Hangfire Microservices](https://www.camiloterevinto.com/post/offloading-and-scheduling-jobs-with-hangfire-microservices) | [Sample](/Samples/Offloading%20And%20Scheduling%20With%20Hangfire%20Microservices) |
 | [OAuth PKCE flow from Python desktop](https://www.camiloterevinto.com/post/oauth-pkce-flow-from-python-desktop) | [Sample](/Samples/OAuth%20PKCE%20flow%20from%20Python%20desktop) |
 | [Microservices with Azure Container Apps and Bicep templates](https://www.camiloterevinto.com/post/microservices-container-apps-and-bicep) | [Sample](/Samples/Microservices%20with%20Azure%20Container%20Apps%20and%20Bicep%20templates) |
-| Simplified ASP.NET Core Clean Architecture (article coming later) | [Sample](/Samples/Simplified%20ASP.NET%20Core%20Clean%20Architecture) |
+| [Practical Clean Architecture solution template](https://www.camiloterevinto.com/post/practical-clean-architecture-template) | [Sample](/Samples/Simplified%20ASP.NET%20Core%20Clean%20Architecture) |
 
 ## Feedback
 
