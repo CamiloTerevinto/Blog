@@ -1,4 +1,4 @@
-targetScope = 'tenant'
+targetScope = 'managementGroup'
 
 @description('The billing scope for this subscription')
 param billingScope string
@@ -16,17 +16,17 @@ param subscriptionName string
 ])
 param subscriptionWorkload string
 
-resource subscription 'Microsoft.Subscription/aliases@2020-09-01' = {
+resource subscription 'Microsoft.Subscription/aliases@2021-10-01' = {
   name: subscriptionName
+  scope: tenant()
   properties: {
     workload: subscriptionWorkload
     displayName: subscriptionName
     billingScope: billingScope
+    additionalProperties: {
+      managementGroupId: parentManagementGroupdId
+    }
   }
-}
-
-resource subscriptionAssignment 'Microsoft.Management/managementGroups/subscriptions@2021-04-01' = {
-  name: '${parentManagementGroupdId}/${subscription.id}'
 }
 
 output subscriptionId string = subscription.id

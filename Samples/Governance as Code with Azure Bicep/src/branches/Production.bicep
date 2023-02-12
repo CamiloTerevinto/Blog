@@ -10,23 +10,29 @@ module productionMG '../components/ManagementGroup.bicep' = {
   name: 'ProductionMG'
   params: {
     name: 'Production'
-    parentManagementGroupId: parentManagementGroupdId 
+    parentManagementGroupId: parentManagementGroupdId
   }
 }
 
 module iso27001Policy '../policies/iso27001.bicep' = {
-  scope: managementGroup(productionMG.name)
+  scope: managementGroup('Production')
   name: 'ISO27001-PolicyReference'
+  dependsOn: [
+    productionMG
+  ]
 }
 
 module policyAssignment '../components/ManagementGroupPolicyAssignment.bicep' = {
-  scope: managementGroup(productionMG.name)
+  scope: managementGroup('Production')
   name: 'ISO27001-PolicyAssignment'
   params: {
     policyDefinitionId: iso27001Policy.outputs.policyDefinitionId
     policyDescription: 'Regulatory Compliance'
     policyName: 'ISO27001'
   }
+  dependsOn: [
+    productionMG
+  ]
 }
 
 module externalMG 'Production/Production-external.bicep' = {
@@ -35,6 +41,9 @@ module externalMG 'Production/Production-external.bicep' = {
     billingScope: billingScope
     parentManagementGroupdId: productionMG.outputs.id
   }
+  dependsOn: [
+    productionMG
+  ]
 }
 
 module internalMG 'Production/Production-internal.bicep' = {
@@ -43,4 +52,7 @@ module internalMG 'Production/Production-internal.bicep' = {
     billingScope: billingScope
     parentManagementGroupdId: productionMG.outputs.id
   }
+  dependsOn: [
+    productionMG
+  ]
 }

@@ -15,29 +15,39 @@ module developmentMG '../components/ManagementGroup.bicep' = {
 }
 
 module europeNorthRegionLock '../policies/RegionLock.bicep' = {
-  scope: managementGroup(developmentMG.name)
-  name: 'DevSub1 Europe North lock'
+  scope: managementGroup('Development')
+  name: 'DevSub1EuropeNorthLock'
   params: {
     allowedRegion: 'EuropeNorth'
   }
+  dependsOn: [
+    developmentMG
+  ]
 }
 
 module ukSouthRegionLock '../policies/RegionLock.bicep' = {
-  scope: managementGroup(developmentMG.name)
-  name: 'DevSub2 UK South lock'
+  scope: managementGroup('Development')
+  name: 'DevSub2UKSouthLock'
   params: {
     allowedRegion: 'UKSouth'
   }
+  dependsOn: [
+    developmentMG
+  ]
 }
 
 module devSub1 '../components/Subscription.bicep' = {
   name: 'DevSub1'
+  scope: managementGroup('Development')
   params: {
     billingScope: billingScope
     parentManagementGroupdId: developmentMG.outputs.id
     subscriptionName: 'DevSub1'
     subscriptionWorkload: 'DevTest'
   }
+  dependsOn: [
+    developmentMG
+  ]
 }
 
 module devSub1Scoped 'Subscriptions/DevSub1.bicep' = {
@@ -52,16 +62,23 @@ module devSub1Scoped 'Subscriptions/DevSub1.bicep' = {
       }
     ]
   }
+  dependsOn: [
+    developmentMG
+  ]
 }
 
 module devSub2 '../components/Subscription.bicep' = {
   name: 'DevSub2'
+  scope: managementGroup('Development')
   params: {
     billingScope: billingScope
     parentManagementGroupdId: developmentMG.outputs.id
     subscriptionName: 'DevSub2'
     subscriptionWorkload: 'DevTest'
   }
+  dependsOn: [
+    developmentMG
+  ]
 }
 
 module devSub2Scoped 'Subscriptions/DevSub2.bicep' = {
@@ -76,4 +93,7 @@ module devSub2Scoped 'Subscriptions/DevSub2.bicep' = {
       }
     ]
   }
+  dependsOn: [
+    developmentMG
+  ]
 }

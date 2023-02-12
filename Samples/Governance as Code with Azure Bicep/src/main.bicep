@@ -2,13 +2,7 @@ targetScope = 'tenant'
 
 param rootManagementGroupName string
 
-param billingAccountName string
-
-param billingProfileName string
-
-param invoiceSectionName string
-
-var billingScope = '/billingAccounts/${billingAccountName}/billingProfiles/${billingProfileName}/invoiceSections/${invoiceSectionName}'
+param billingScope string
 
 resource rootMG 'Microsoft.Management/managementGroups@2021-04-01' existing = {
   name: rootManagementGroupName

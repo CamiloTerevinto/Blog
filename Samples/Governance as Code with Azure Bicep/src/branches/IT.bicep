@@ -16,10 +16,14 @@ module itMG '../components/ManagementGroup.bicep' = {
 
 module networkSub '../components/Subscription.bicep' = {
   name: 'NetworkSub'
+  scope: managementGroup('IT')
   params: {
     billingScope: billingScope
     parentManagementGroupdId: itMG.outputs.id
     subscriptionName: 'NetworkSub'
     subscriptionWorkload: 'Production'
   }
+  dependsOn: [
+    itMG
+  ]
 }

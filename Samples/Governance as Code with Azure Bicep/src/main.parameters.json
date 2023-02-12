@@ -5,13 +5,7 @@
     "rootManagementGroupName": {
       "value": "{YourTenantId}"
     },
-    "billingAccountName": {
-      "value": "{BillingAccountName}"
-    },
-    "billingProfileName": {
-      "value": "{BillingProfileName}"
-    },
-    "invoiceSectionName": {
+    "billingScope": {
       "value": "{InvoiceSectionName}"
     }
   }
