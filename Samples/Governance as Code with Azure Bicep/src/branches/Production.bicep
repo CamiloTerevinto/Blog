@@ -16,12 +16,12 @@ module productionMG '../components/ManagementGroup.bicep' = {
 
 module iso27001Policy '../policies/iso27001.bicep' = {
   scope: managementGroup(productionMG.name)
-  name: 'ISO27001'
+  name: 'ISO27001-PolicyReference'
 }
 
 module policyAssignment '../components/ManagementGroupPolicyAssignment.bicep' = {
   scope: managementGroup(productionMG.name)
-  name: 'ISO27001'
+  name: 'ISO27001-PolicyAssignment'
   params: {
     policyDefinitionId: iso27001Policy.outputs.policyDefinitionId
     policyDescription: 'Regulatory Compliance'
