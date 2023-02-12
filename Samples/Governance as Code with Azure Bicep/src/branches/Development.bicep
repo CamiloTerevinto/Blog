@@ -14,6 +14,22 @@ module developmentMG '../components/ManagementGroup.bicep' = {
   }
 }
 
+module europeNorthRegionLock '../policies/RegionLock.bicep' = {
+  scope: managementGroup(developmentMG.name)
+  name: 'DevSub1 Europe North lock'
+  params: {
+    allowedRegion: 'EuropeNorth'
+  }
+}
+
+module ukSouthRegionLock '../policies/RegionLock.bicep' = {
+  scope: managementGroup(developmentMG.name)
+  name: 'DevSub2 UK South lock'
+  params: {
+    allowedRegion: 'UKSouth'
+  }
+}
+
 module devSub1 '../components/Subscription.bicep' = {
   name: 'DevSub1'
   params: {
@@ -24,6 +40,20 @@ module devSub1 '../components/Subscription.bicep' = {
   }
 }
 
+module devSub1Scoped 'Subscriptions/DevSub1.bicep' = {
+  name: 'DevSub1ScopedResources'
+  params: {
+    subscriptionId: devSub1.outputs.subscriptionId
+    policies: [
+      {
+        Name: ukSouthRegionLock.name
+        DefinitionId: ukSouthRegionLock.outputs.policyDefinitionId
+        Description: 'UK South regional lock'
+      }
+    ]
+  }
+}
+
 module devSub2 '../components/Subscription.bicep' = {
   name: 'DevSub2'
   params: {
@@ -31,5 +61,19 @@ module devSub2 '../components/Subscription.bicep' = {
     parentManagementGroupdId: developmentMG.outputs.id
     subscriptionName: 'DevSub2'
     subscriptionWorkload: 'DevTest'
+  }
+}
+
+module devSub2Scoped 'Subscriptions/DevSub2.bicep' = {
+  name: 'DevSub2ScopedResources'
+  params: {
+    subscriptionId: devSub2.outputs.subscriptionId
+    policies: [
+      {
+        Name: europeNorthRegionLock.name
+        DefinitionId: europeNorthRegionLock.outputs.policyDefinitionId
+        Description: 'Europe North regional lock'
+      }
+    ]
   }
 }

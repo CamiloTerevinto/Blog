@@ -14,6 +14,21 @@ module productionMG '../components/ManagementGroup.bicep' = {
   }
 }
 
+module iso27001Policy '../policies/iso27001.bicep' = {
+  scope: managementGroup(productionMG.name)
+  name: 'ISO27001'
+}
+
+module policyAssignment '../components/ManagementGroupPolicyAssignment.bicep' = {
+  scope: managementGroup(productionMG.name)
+  name: 'ISO27001'
+  params: {
+    policyDefinitionId: iso27001Policy.outputs.policyDefinitionId
+    policyDescription: 'Regulatory Compliance'
+    policyName: 'ISO27001'
+  }
+}
+
 module externalMG 'Production/Production-external.bicep' = {
   name: 'ProductionExternalMG'
   params: {
