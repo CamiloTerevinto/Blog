@@ -50,7 +50,7 @@ module devSub1 '../components/Subscription.bicep' = {
   ]
 }
 
-module devSub1Scoped 'Subscriptions/DevSub1.bicep' = {
+module devSub1Scoped 'Development/DevSub1.bicep' = {
   name: 'DevSub1ScopedResources'
   params: {
     subscriptionId: devSub1.outputs.subscriptionId
@@ -81,7 +81,7 @@ module devSub2 '../components/Subscription.bicep' = {
   ]
 }
 
-module devSub2Scoped 'Subscriptions/DevSub2.bicep' = {
+module devSub2Scoped 'Development/DevSub2.bicep' = {
   name: 'DevSub2ScopedResources'
   params: {
     subscriptionId: devSub2.outputs.subscriptionId
