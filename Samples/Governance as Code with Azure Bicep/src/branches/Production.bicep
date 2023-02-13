@@ -35,7 +35,7 @@ module policyAssignment '../components/ManagementGroupPolicyAssignment.bicep' = 
   ]
 }
 
-module externalMG 'Production/Production-external.bicep' = {
+module externalMG 'Production/ProductionExternal.bicep' = {
   name: 'ProductionExternalMG'
   params: {
     billingScope: billingScope
@@ -46,7 +46,7 @@ module externalMG 'Production/Production-external.bicep' = {
   ]
 }
 
-module internalMG 'Production/Production-internal.bicep' = {
+module internalMG 'Production/ProductionInternal.bicep' = {
   name: 'ProductionInternalMG'
   params: {
     billingScope: billingScope
