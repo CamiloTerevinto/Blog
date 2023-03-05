@@ -1,0 +1,447 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TrustFrameworkPolicy
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06"
+  PolicySchemaVersion="0.3.0.0"
+  TenantId="{YOUR_TENANT}.onmicrosoft.com"
+  PolicyId="B2C_1A_TrustFrameworkExtensions"
+  PublicPolicyUri="http://{YOUR_TENANT}.onmicrosoft.com/B2C_1A_TrustFrameworkExtensions">
+
+  <BasePolicy>
+    <TenantId>{YOUR_TENANT}.onmicrosoft.com</TenantId>
+    <PolicyId>B2C_1A_TrustFrameworkLocalization</PolicyId>
+  </BasePolicy>
+
+  <BuildingBlocks>
+    <ClaimsSchema>
+      <!-- For Local Sign Up. Read only email address to present to the user after validation-->
+      <ClaimType Id="readonlyEmail">
+        <DisplayName>E-mail Address</DisplayName>
+        <DataType>string</DataType>
+        <UserInputType>Readonly</UserInputType>
+      </ClaimType>
+
+      <!-- For Local Sign Up. Used to ensure the email is not already taken after validation. -->
+      <ClaimType Id="objectIdNotFound">
+        <DisplayName>Used for comparison</DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+
+      <!-- For Password Reset in SignUpSignIn flow. -->
+      <ClaimType Id="isForgotPassword">
+        <DisplayName>isForgotPassword</DisplayName>
+        <DataType>boolean</DataType>
+        <AdminHelpText>Whether the user has selected Forgot your Password</AdminHelpText>
+      </ClaimType>
+    </ClaimsSchema>
+    <ClaimsTransformations>
+      <!-- For Local Sign Up. This ClaimsTransformation takes the user's email and converts it into readonly -->
+      <ClaimsTransformation Id="CreateReadonlyEmailClaim" TransformationMethod="FormatStringClaim">
+        <InputClaims>
+          <InputClaim ClaimTypeReferenceId="email" TransformationClaimType="inputClaim" />
+        </InputClaims>
+        <InputParameters>
+          <InputParameter Id="stringFormat" DataType="string" Value="{0}" />
+        </InputParameters>
+        <OutputClaims>
+          <OutputClaim ClaimTypeReferenceId="readonlyEmail" TransformationClaimType="outputClaim" />
+        </OutputClaims>
+      </ClaimsTransformation>
+
+      <!-- For Local Sign Up. This ClaimsTransformation ensures the email is not already in use -->
+      <ClaimsTransformation Id="AssertObjectIdObjectIdNotFoundAreEqual" TransformationMethod="AssertStringClaimsAreEqual">
+        <InputClaims>
+          <InputClaim ClaimTypeReferenceId="objectId" TransformationClaimType="inputClaim1" />
+          <InputClaim ClaimTypeReferenceId="objectIdNotFound" TransformationClaimType="inputClaim2" />
+        </InputClaims>
+        <InputParameters>
+          <InputParameter Id="stringComparison" DataType="string" Value="ordinalIgnoreCase" />
+        </InputParameters>
+      </ClaimsTransformation>
+    </ClaimsTransformations>
+  </BuildingBlocks>
+
+  <ClaimsProviders>
+    <!-- This ClaimsProvider deals with AAD sign in -->
+    <ClaimsProvider>
+      <Domain>{YOUR_TENANT}</Domain>
+      <DisplayName>AAD</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="{YOUR_TENANT}-OAuth">
+          <DisplayName>Employee login</DisplayName>
+          <Description>Login with your employee account</Description>
+          <Protocol Name="OpenIdConnect" />
+          <Metadata>
+            <Item Key="METADATA">https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration</Item>
+            <Item Key="ValidTokenIssuerPrefixes">https://login.microsoftonline.com/{YOUR_AAD_TENANT_ID}</Item>
+            <Item Key="client_id">{YOUR_AAD_CLIENT_ID}</Item>
+            <Item Key="response_types">code</Item>
+            <Item Key="scope">openid profile email</Item>
+            <Item Key="response_mode">form_post</Item>
+            <Item Key="HttpBinding">POST</Item>
+            <Item Key="UsePolicyInRedirectUri">false</Item>
+            <Item Key="DiscoverMetadataByTokenIssuer">true</Item>
+          </Metadata>
+          <CryptographicKeys>
+            <Key Id="client_secret" StorageReferenceId="B2C_1A_SingleTenantAppsecret" />
+          </CryptographicKeys>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="issuerUserId" PartnerClaimType="oid" />
+            <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="email" />
+            <OutputClaim ClaimTypeReferenceId="tenantId" PartnerClaimType="tid" />
+            <OutputClaim ClaimTypeReferenceId="givenName" PartnerClaimType="given_name" />
+            <OutputClaim ClaimTypeReferenceId="surname" PartnerClaimType="family_name" />
+            <OutputClaim ClaimTypeReferenceId="displayName" PartnerClaimType="name" />
+            <OutputClaim ClaimTypeReferenceId="authenticationSource" DefaultValue="socialIdpAuthentication" AlwaysUseDefaultValue="true" />
+            <OutputClaim ClaimTypeReferenceId="identityProvider" PartnerClaimType="iss" />
+          </OutputClaims>
+          <OutputClaimsTransformations>
+            <OutputClaimsTransformation ReferenceId="CreateRandomUPNUserName" />
+            <OutputClaimsTransformation ReferenceId="CreateUserPrincipalName" />
+            <OutputClaimsTransformation ReferenceId="CreateAlternativeSecurityId" />
+            <OutputClaimsTransformation ReferenceId="CreateSubjectClaimFromAlternativeSecurityId" />
+          </OutputClaimsTransformations>
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-SocialLogin" />
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+    <!-- This ClaimsProvider deals with local account sign up-->
+    <ClaimsProvider>
+      <DisplayName>Local Account sign up</DisplayName>
+      <TechnicalProfiles>
+        <!-- This TechnicalProfile makes the user enter and verify their email. -->
+        <TechnicalProfile Id="LocalAccount_EmailVerification">
+          <DisplayName>Email verification for Local Account</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>
+            <Item Key="language.button_continue">Continue</Item>
+            <Item Key="UserMessageIfClaimsTransformationStringsAreNotEqual">The account you are trying to create already exists, please sign-in instead.</Item>
+          </Metadata>
+          <DisplayClaims>
+            <DisplayClaim DisplayControlReferenceId="emailVerificationControl" />
+          </DisplayClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="Verified.Email" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="authenticationSource" DefaultValue="localAccountAuthentication" />
+          </OutputClaims>
+          <ValidationTechnicalProfiles>
+            <ValidationTechnicalProfile ReferenceId="AAD-VerifyEmailDoesNotExist" />
+          </ValidationTechnicalProfiles>
+        </TechnicalProfile>
+
+        <!-- This is a Validation TechnicalProfile which validates that the verified email (from the user's input) doesn't already exist in B2C. -->
+        <TechnicalProfile Id="AAD-VerifyEmailDoesNotExist">
+          <Metadata>
+            <Item Key="Operation">Read</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">false</Item>
+          </Metadata>
+          <IncludeInSso>false</IncludeInSso>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInNames.emailAddress" Required="true" />
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="objectId" DefaultValue="NOTFOUND" />
+            <OutputClaim ClaimTypeReferenceId="objectIdNotFound" DefaultValue="NOTFOUND" AlwaysUseDefaultValue="true" />
+            <OutputClaim ClaimTypeReferenceId="readOnlyEmail" />
+            <OutputClaim ClaimTypeReferenceId="authenticationSource" DefaultValue="localAccountAuthentication" />
+          </OutputClaims>
+          <OutputClaimsTransformations>
+            <OutputClaimsTransformation ReferenceId="AssertObjectIdObjectIdNotFoundAreEqual" />
+          </OutputClaimsTransformations>
+          <IncludeTechnicalProfile ReferenceId="AAD-Common" />
+        </TechnicalProfile>
+        
+        <!-- This TechnicalProfile overrides the base LocalAccountSignUpWithLogonEmail profile to use the read-only email. -->
+        <TechnicalProfile Id="LocalAccount_SignUpAfterEmailVerification">
+          <DisplayName>Email signup</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="IpAddressClaimReferenceId">IpAddress</Item>
+            <Item Key="ContentDefinitionReferenceId">api.localaccountsignup</Item>
+            <Item Key="EnforceEmailVerification">False</Item>
+          </Metadata>
+          <CryptographicKeys>
+            <Key Id="issuer_secret" StorageReferenceId="B2C_1A_TokenSigningKeyContainer" />
+          </CryptographicKeys>
+          <InputClaimsTransformations>
+            <InputClaimsTransformation ReferenceId="CreateReadonlyEmailClaim" />
+          </InputClaimsTransformations>
+          <InputClaims>            
+            <InputClaim ClaimTypeReferenceId="readOnlyEmail" />
+          </InputClaims>
+          <DisplayClaims>
+            <DisplayClaim ClaimTypeReferenceId="readOnlyEmail" Required="true" />
+            <DisplayClaim ClaimTypeReferenceId="newPassword" Required="true" />
+            <DisplayClaim ClaimTypeReferenceId="reenterPassword" Required="true" />
+
+            <!-- Optional claims, to be collected from the user -->
+            <DisplayClaim ClaimTypeReferenceId="displayName" />
+            <DisplayClaim ClaimTypeReferenceId="givenName" />
+            <DisplayClaim ClaimTypeReferenceId="surName" />
+          </DisplayClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="objectId" />
+            <OutputClaim ClaimTypeReferenceId="readOnlyEmail" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="newPassword" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="reenterPassword" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="executed-SelfAsserted-Input" DefaultValue="true" />
+            <OutputClaim ClaimTypeReferenceId="authenticationSource" />
+            <OutputClaim ClaimTypeReferenceId="newUser" />
+
+            <OutputClaim ClaimTypeReferenceId="tenantId" PartnerClaimType="tid" />
+            <OutputClaim ClaimTypeReferenceId="givenName" PartnerClaimType="given_name" />
+            <OutputClaim ClaimTypeReferenceId="surName" PartnerClaimType="family_name" />
+            <OutputClaim ClaimTypeReferenceId="displayName" PartnerClaimType="name" />
+          </OutputClaims>          
+          <ValidationTechnicalProfiles>
+            <ValidationTechnicalProfile ReferenceId="AAD-UserWriteUsingLogonEmail" />
+          </ValidationTechnicalProfiles>
+          <!-- Session Management should not be enabled for sign up -->
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+    <!-- This ClaimsProvider deals with local account sign in-->
+    <ClaimsProvider>
+      <DisplayName>Local Account sign in</DisplayName>
+      <TechnicalProfiles>
+        <!-- This TechnicalProfile overrides the base profile to add the IEF application ids -->
+        <TechnicalProfile Id="login-NonInteractive">
+          <Metadata>
+            <Item Key="client_id">{YOUR_IEF_PROXY_CLIENT_ID}</Item>
+            <Item Key="IdTokenAudience">{YOUR_IEF_CLIENT_ID}</Item>
+          </Metadata>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="{YOUR_IEF_PROXY_CLIENT_ID}" />
+            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="{YOUR_IEF_CLIENT_ID}" />
+          </InputClaims>
+        </TechnicalProfile>
+
+        <!-- This TechnicalProfile overrides the base profile to add the Forgot Password flow and change the sign up target. -->
+        <TechnicalProfile Id="SelfAsserted-LocalAccountSignin-Email">
+          <Metadata>
+            <Item Key="setting.forgotPasswordLinkOverride">ForgotPasswordExchange</Item>
+            <Item Key="SignUpTarget">LocalAccountSignUp_EmailVerification</Item>
+          </Metadata>
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+    <!-- This ClaimsProvider deals with local account password reset-->
+    <ClaimsProvider>
+      <DisplayName>Local Account password reset</DisplayName>
+      <TechnicalProfiles>
+        <!-- This TechnicalProfile sets the isForgotPassword claim. -->
+        <TechnicalProfile Id="ForgotPassword">
+          <DisplayName>Forgot your password?</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.ClaimsTransformationProtocolProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="isForgotPassword" DefaultValue="true" AlwaysUseDefaultValue="true"/>
+          </OutputClaims>
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+        </TechnicalProfile>
+
+        <!-- This TechnicalProfile overrides the base profile to enable SSO after the password reset. -->
+        <TechnicalProfile Id="LocalAccountWritePasswordUsingObjectId">
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+  </ClaimsProviders>
+
+  <UserJourneys>
+    <UserJourney Id="{YOUR_TENANT}_SignUpSignIn" DefaultCpimIssuerTechnicalProfileReferenceId="JwtIssuer">
+      <OrchestrationSteps>
+        <!-- 1. Present the sign-in/sign-up/AAD button screen first -->
+        <OrchestrationStep Order="1" Type="CombinedSignInAndSignUp" ContentDefinitionReferenceId="api.signuporsignin">
+          <ClaimsProviderSelections>
+            <!-- Allow the user to see the sign in with email option -->
+            <ClaimsProviderSelection ValidationClaimsExchangeId="LocalAccount_SignIn" />
+            <!-- Allow the user to reset their password -->
+            <ClaimsProviderSelection TargetClaimsExchangeId="ForgotPasswordExchange" />
+            <!-- Allow the user to see the sign in with AAD option -->
+            <ClaimsProviderSelection TargetClaimsExchangeId="AADExchange" />
+          </ClaimsProviderSelections>
+          <ClaimsExchanges>
+            <!-- This exchange provides the base UI for the user to login/signup -->
+            <ClaimsExchange Id="LocalAccount_SignIn" TechnicalProfileReferenceId="SelfAsserted-LocalAccountSignin-Email" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- 2. If the user signed in using a local account, redirect to the LocalSignIn subjourney to simplify preconditions -->
+        <OrchestrationStep Order="2" Type="InvokeSubJourney">
+          <Preconditions>
+            <!-- Only execute this if the user signed in successfully -->
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
+              <Value>objectId</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <JourneyList>
+            <Candidate SubJourneyReferenceId="LocalSignIn" />
+          </JourneyList>
+        </OrchestrationStep>
+        
+        <!-- 3. Redirect to the appropriate exchange -->
+        <OrchestrationStep Order="3" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <!-- If user selected local sign up, invoke the email verification screen -->
+            <ClaimsExchange Id="LocalAccountSignUp_EmailVerification" TechnicalProfileReferenceId="LocalAccount_EmailVerification" />
+            <!-- If user selected AAD sign in, invoke this -->
+            <ClaimsExchange Id="AADExchange" TechnicalProfileReferenceId="{YOUR_TENANT}-OAuth" />
+            <!-- If the user selected the forgot password link, invoke this -->
+            <ClaimsExchange Id="ForgotPasswordExchange" TechnicalProfileReferenceId="ForgotPassword" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- 4. If the user selected the AAD sign in, redirect to the AAD subjourney -->
+        <OrchestrationStep Order="4" Type="InvokeSubJourney">
+          <Preconditions>
+            <!-- Skip if we don't have an authenticationSource value -->
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
+              <Value>authenticationSource</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+            <!-- Skip if the authenticationSource is not socialIdpAuthentication -->
+            <Precondition Type="ClaimEquals" ExecuteActionsIf="false">
+              <Value>authenticationSource</Value>
+              <Value>socialIdpAuthentication</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <JourneyList>
+            <Candidate SubJourneyReferenceId="AAD" />
+          </JourneyList>
+        </OrchestrationStep>
+
+        <!-- 5. If the user selected the forgot password link, redirect to the PasswordReset subjourney  -->
+        <OrchestrationStep Order="5" Type="InvokeSubJourney">
+          <Preconditions>
+            <!-- Only execute this if we have the isForgotPassword claim -->
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
+              <Value>isForgotPassword</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <JourneyList>
+            <Candidate SubJourneyReferenceId="PasswordReset" />
+          </JourneyList>
+        </OrchestrationStep>
+
+        <!-- 6. If the user selected the local account sign up, redirect to the LocalSignUp subjourney -->
+        <OrchestrationStep Order="6" Type="InvokeSubJourney">
+          <JourneyList>
+            <Candidate SubJourneyReferenceId="LocalSignUp" />
+          </JourneyList>
+        </OrchestrationStep>
+      </OrchestrationSteps>
+      <ClientDefinition ReferenceId="DefaultWeb" />
+    </UserJourney>
+  </UserJourneys>
+
+  <SubJourneys>
+    <SubJourney Id="AAD" Type="Transfer">
+      <OrchestrationSteps>
+         <!-- 1. Try to find the B2C account from the AAD profile -->
+        <OrchestrationStep Order="1" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="AADUserReadUsingAlternativeSecurityId" TechnicalProfileReferenceId="AAD-UserReadUsingAlternativeSecurityId-NoError" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- 2. When the user doesn't exist in B2C, create it automatically -->
+        <OrchestrationStep Order="2" Type="ClaimsExchange">
+          <Preconditions>
+            <!-- Do not execute this if the user already exists in B2C after AAD sign in -->
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+              <Value>objectId</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <!-- This creates the object in B2C. ObjectId must exist after this executes, except on failure -->
+            <ClaimsExchange Id="AADUserWrite" TechnicalProfileReferenceId="AAD-UserWriteUsingAlternativeSecurityId" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- 3. Get the user's data using the Object ID -->
+        <OrchestrationStep Order="3" Type="ClaimsExchange">
+          <ClaimsExchanges>
+              <ClaimsExchange Id="AADUserReadWithObjectId" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- 4. Return the resulting claims to the application -->
+        <OrchestrationStep Order="4" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+      </OrchestrationSteps>
+    </SubJourney>
+
+    <SubJourney Id="LocalSignIn" Type="Transfer">
+      <OrchestrationSteps>
+        <!-- 1.. Get the user's data using the Object ID -->
+        <OrchestrationStep Order="2" Type="ClaimsExchange">
+          <ClaimsExchanges>
+              <ClaimsExchange Id="AADUserReadWithObjectId" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- 2.. Return the resulting claims to the application -->
+        <OrchestrationStep Order="3" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+      </OrchestrationSteps>
+    </SubJourney>
+
+    <SubJourney Id="LocalSignUp" Type="Transfer">
+      <OrchestrationSteps>
+        <!-- 1. Once email is verified, we continue with the sign up flow. -->
+        <OrchestrationStep Order="1" Type="ClaimsExchange"> 
+          <ClaimsExchanges>
+            <!-- Invoke the second part of the sign up flow -->
+            <ClaimsExchange Id="LocalAccountSignUp_WithReadOnlyEmail" TechnicalProfileReferenceId="LocalAccount_SignUpAfterEmailVerification" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- 2. Get the user's data using the Object ID -->
+        <OrchestrationStep Order="2" Type="ClaimsExchange">
+          <ClaimsExchanges>
+              <ClaimsExchange Id="AADUserReadWithObjectId" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- 3. Return the resulting claims to the application -->
+        <OrchestrationStep Order="3" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+      </OrchestrationSteps>
+    </SubJourney>
+
+    <SubJourney Id="PasswordReset" Type="Transfer">
+      <OrchestrationSteps>
+        <!-- 1. Validate user's email address. -->
+        <OrchestrationStep Order="1" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="PasswordResetUsingEmailAddressExchange" TechnicalProfileReferenceId="LocalAccountDiscoveryUsingEmailAddress" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- 2. Collect and persist a new password. -->
+        <OrchestrationStep Order="2" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="NewCredentials" TechnicalProfileReferenceId="LocalAccountWritePasswordUsingObjectId" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+        
+        <!-- 3. Get the user's data using the Object ID -->
+        <OrchestrationStep Order="3" Type="ClaimsExchange">
+          <ClaimsExchanges>
+              <ClaimsExchange Id="AADUserReadWithObjectId" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- 4. Return the resulting claims to the application -->
+        <OrchestrationStep Order="4" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+      </OrchestrationSteps>
+    </SubJourney>    
+  </SubJourneys>
+</TrustFrameworkPolicy>
