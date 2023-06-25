@@ -1,41 +1,37 @@
-<h1 mat-dialog-title>Editar usuario</h1>
+<h1 mat-dialog-title>Edit user</h1>
 <div mat-dialog-content>
     <form class="edit-user-form" [formGroup]="editUserForm">
         <mat-form-field>
             <mat-label>Email</mat-label>
-            <input matInput formControlName="emailAddress" placeholder="Email">
-            <mat-error *ngIf="editUserForm.controls.emailAddress.invalid">
+            <input matInput formControlName="email" placeholder="Email">
+            <mat-error *ngIf="editUserForm.controls.email.invalid">
                 Please enter a valid email address
             </mat-error>
         </mat-form-field>
         <mat-form-field>
-            <mat-label>Contraseña</mat-label>
-            <input matInput formControlName="password" type="password">
-        </mat-form-field>
-        <mat-form-field>
-            <mat-label>Nombre</mat-label>
+            <mat-label>First name</mat-label>
             <input matInput formControlName="firstName" placeholder="First name">
             <mat-error *ngIf="editUserForm.controls.firstName.invalid">
                 Please enter a first name
             </mat-error>
         </mat-form-field>
         <mat-form-field>
-            <mat-label>Apellido</mat-label>
+            <mat-label>Last name</mat-label>
             <input matInput formControlName="lastName" placeholder="Last name">
             <mat-error *ngIf="editUserForm.controls.lastName.invalid">
                 Please enter a last name
             </mat-error>
         </mat-form-field>
         <mat-form-field>
-            <mat-label>Teléfono</mat-label>
-            <input matInput formControlName="phoneNumber" placeholder="2020-06-28">
+            <mat-label>Phone number</mat-label>
+            <input matInput formControlName="phoneNumber" placeholder="Phone number">
             <mat-error *ngIf="editUserForm.controls.phoneNumber.invalid">
-                Please enter a last name
+                Please enter a phone number
             </mat-error>
         </mat-form-field>
     </form>
 </div>
 <div mat-dialog-actions align="end">
-  <button mat-button color="secondary" (click)="onCancel()">Cancelar</button>
-  <button mat-raised-button color="primary" [mat-dialog-close]="editUserForm.getRawValue()" [disabled]="!editUserForm.dirty || !editUserForm.valid">Guardar</button>
+  <button mat-button color="secondary" (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="editUserForm.getRawValue()" [disabled]="!editUserForm.dirty || !editUserForm.valid">Save</button>
 </div>

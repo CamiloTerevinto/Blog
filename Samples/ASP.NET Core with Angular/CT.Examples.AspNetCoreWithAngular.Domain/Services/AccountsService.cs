@@ -28,7 +28,7 @@ public class AccountsService : IAccountsService
             .Select(u => new AccountDto
             {
                 AccountId = u.Id,
-                EmailAddress = u.Email,
+                Email = u.Email,
                 FirstName = u.FirstName,
                 LastName = u.LastName,
                 PhoneNumber = u.PhoneNumber,
@@ -43,7 +43,7 @@ public class AccountsService : IAccountsService
         return new AccountDto
         {
             AccountId = account.Id,
-            EmailAddress = account.Email,
+            Email = account.Email,
             FirstName = account.FirstName,
             LastName = account.LastName,
             PhoneNumber = account.PhoneNumber,

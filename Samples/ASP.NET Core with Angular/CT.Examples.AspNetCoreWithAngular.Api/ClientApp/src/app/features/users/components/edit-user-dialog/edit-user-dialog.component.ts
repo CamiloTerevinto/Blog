@@ -15,8 +15,7 @@ export class EditUserDialogComponent {
   constructor(public readonly dialogRef: MatDialogRef<EditUserDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: UserModel) { 
       this.editUserForm = new UntypedFormGroup({
-        'emailAddress': new UntypedFormControl(data.emailAddress, [ Validators.required, Validators.email ]),
-        'password': new UntypedFormControl(''),
+        'email': new UntypedFormControl(data.email, [ Validators.required, Validators.email ]),
         'firstName': new UntypedFormControl(data.firstName, [ Validators.required ]),
         'lastName': new UntypedFormControl(data.lastName, [ Validators.required ]),
         'phoneNumber': new UntypedFormControl(data.phoneNumber, [ Validators.required ])
