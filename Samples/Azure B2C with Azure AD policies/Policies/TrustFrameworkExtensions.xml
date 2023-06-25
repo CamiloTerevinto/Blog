@@ -383,14 +383,14 @@
     <SubJourney Id="LocalSignIn" Type="Transfer">
       <OrchestrationSteps>
         <!-- 1.. Get the user's data using the Object ID -->
-        <OrchestrationStep Order="2" Type="ClaimsExchange">
+        <OrchestrationStep Order="1" Type="ClaimsExchange">
           <ClaimsExchanges>
               <ClaimsExchange Id="AADUserReadWithObjectId" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
           </ClaimsExchanges>
         </OrchestrationStep>
 
         <!-- 2.. Return the resulting claims to the application -->
-        <OrchestrationStep Order="3" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+        <OrchestrationStep Order="2" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
       </OrchestrationSteps>
     </SubJourney>
 
