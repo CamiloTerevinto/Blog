@@ -1,0 +1,9 @@
+.users-component {
+    margin-left: 16px;
+    margin-top: 16px;
+    max-width: 1000px;
+}
+
+.mat-table {
+    width: 100%;
+}

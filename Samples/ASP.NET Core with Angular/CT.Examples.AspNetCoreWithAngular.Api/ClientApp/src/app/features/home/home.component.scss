@@ -1,0 +1,30 @@
+.home-component {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    &__menu {
+        width: 200px;
+        display: flex;
+        flex-direction: column;
+    
+        &-image-wrapper {
+            display: flex;
+            justify-content: center;
+    
+            img {
+                width: 90%;
+            }
+        }
+    }
+    
+}
+
+.mat-sidenav-container {
+    flex: 1 1 auto;
+}
+
+.mat-sidenav {
+    min-width: 200px;
+}
+

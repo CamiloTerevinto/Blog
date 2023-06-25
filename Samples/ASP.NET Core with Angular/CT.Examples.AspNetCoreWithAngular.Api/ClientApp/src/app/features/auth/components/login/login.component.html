@@ -1,0 +1,42 @@
+<div class="wrapper">
+  <div class="login-component">
+    <mat-card>
+      <mat-card-header class="login-component-header">
+        <img mat-card-image src="assets/your-logo-here.jpg" alt="Your Logo" />
+        <mat-card-title>Portal</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form class="login-component-form" [formGroup]="loginForm">
+          <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" placeholder="Email" />
+            <mat-error *ngIf="loginForm.controls.email.invalid">
+              Please enter a valid email address.
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Password</mat-label>
+            <input
+              matInput
+              formControlName="password"
+              placeholder="Password"
+              type="password"
+            />
+            <mat-error *ngIf="loginForm.controls.password.hasError('required')">
+              Please enter your password.
+            </mat-error>
+          </mat-form-field>
+          <div *ngIf="hasLoginFailed" class="login-component-form-error">
+            The credentials provided are not correct.
+          </div>
+        </form>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <a mat-button routerLink="/signup">Sign up</a>
+        <button mat-raised-button color="primary" (click)="onSubmit()">
+          Log in
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

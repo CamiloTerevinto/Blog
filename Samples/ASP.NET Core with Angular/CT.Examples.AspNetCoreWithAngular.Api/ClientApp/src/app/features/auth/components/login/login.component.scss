@@ -1,0 +1,48 @@
+.wrapper {
+    height: 100%;
+    width: 100%;
+    background-color: silver;
+}
+
+.login-component {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+
+    &-header {
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: center;
+
+        img {
+            width: 250px;
+            height: auto;
+        }
+    }
+    
+    &-form {
+        display: flex;
+        flex-direction: column;
+        width: 400px;
+        margin-left: 24px;
+        margin-right: 24px;
+
+        &-error {
+            color: red;
+        }
+    }
+
+    .mat-card-header .mat-card-title {
+        margin-bottom: 16px;
+    }
+    
+    .mat-form-field+.mat-form-field {
+        margin-top: 16px;
+    }
+
+    .mat-card-actions {
+        margin-right: 24px;
+        margin-bottom: 0;
+    }
+}

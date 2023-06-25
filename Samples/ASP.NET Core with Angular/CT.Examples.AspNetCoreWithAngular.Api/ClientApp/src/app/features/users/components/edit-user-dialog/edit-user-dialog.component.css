@@ -1,0 +1,8 @@
+.edit-user-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.mat-form-field + .mat-form-field {
+    margin-top: 8px;
+}

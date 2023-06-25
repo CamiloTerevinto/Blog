@@ -4,6 +4,7 @@ This repository contains the final samples for the different posts on my blog.
 
 | Article      | Sample |
 |--------------|-------:|
+| ASP.NET Core with Angular template | [Sample](/Samples/ASP.NET%20Core%20with%20Angular) |
 | [Azure B2C Client Credentials with ASP.NET Core](https://www.camiloterevinto.com/post/azure-b2c-client-credentials-with-asp-net-core) | [Sample](/Samples/Azure%20B2C%20Client%20Credentials%20with%20ASP.NET%20Core) |
 | [Azure B2C with Azure AD policies](https://www.camiloterevinto.com/post/azure-b2c-with-azure-active-directory) | [Sample](/Samples/Azure%20B2C%20with%20Azure%20AD%20policies) |
 | [Governance As Code with Azure Bicep](https://www.camiloterevinto.com/post/governance-as-code-with-azure-bicep) | [Sample](/Samples/Governance%20as%20Code%20with%20Azure%20Bicep) |

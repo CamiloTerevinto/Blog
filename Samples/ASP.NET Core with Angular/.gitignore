@@ -1,0 +1,4 @@
+**/bin
+**/obj
+CT.Examples.AspNetCoreWithAngular.Api/ClientApp/node_modules/
+CT.Examples.AspNetCoreWithAngular.Api/ClientApp/.angular/

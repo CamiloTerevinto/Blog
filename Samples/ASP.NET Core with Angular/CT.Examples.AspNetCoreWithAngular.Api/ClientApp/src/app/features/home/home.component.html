@@ -1,0 +1,19 @@
+<div class="home-component">
+  <mat-sidenav-container>
+    <mat-sidenav mode="side" opened>
+      <div class="home-component__menu">
+        <div class="home-component__menu-image-wrapper">
+          <img src="/assets/your-logo-here.jpg" alt="Your logo" />
+        </div>
+        <div>
+          <mat-nav-list>
+            <a mat-list-item routerLink="users" *ngIf="isUserAdmin" style="background-color: #303f9f; color: white">Users</a>
+          </mat-nav-list>
+        </div>
+      </div>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

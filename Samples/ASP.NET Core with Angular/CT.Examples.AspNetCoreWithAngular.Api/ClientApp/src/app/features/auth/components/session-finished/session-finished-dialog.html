@@ -1,0 +1,8 @@
+<h1 mat-dialog-title>Session finished</h1>
+<div mat-dialog-content>
+  <p>Your session has finished and you must log in again.</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button color="secondary" (click)="onNoClick()">Stay on current page</button>
+  <button mat-raised-button color="primary" (click)="onYesClick()" cdkFocusInitial>Go to login page</button>
+</div>

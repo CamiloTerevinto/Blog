@@ -1,0 +1,41 @@
+<h1 mat-dialog-title>Editar usuario</h1>
+<div mat-dialog-content>
+    <form class="edit-user-form" [formGroup]="editUserForm">
+        <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="emailAddress" placeholder="Email">
+            <mat-error *ngIf="editUserForm.controls.emailAddress.invalid">
+                Please enter a valid email address
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Contraseña</mat-label>
+            <input matInput formControlName="password" type="password">
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="firstName" placeholder="First name">
+            <mat-error *ngIf="editUserForm.controls.firstName.invalid">
+                Please enter a first name
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Apellido</mat-label>
+            <input matInput formControlName="lastName" placeholder="Last name">
+            <mat-error *ngIf="editUserForm.controls.lastName.invalid">
+                Please enter a last name
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Teléfono</mat-label>
+            <input matInput formControlName="phoneNumber" placeholder="2020-06-28">
+            <mat-error *ngIf="editUserForm.controls.phoneNumber.invalid">
+                Please enter a last name
+            </mat-error>
+        </mat-form-field>
+    </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button color="secondary" (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="editUserForm.getRawValue()" [disabled]="!editUserForm.dirty || !editUserForm.valid">Guardar</button>
+</div>
