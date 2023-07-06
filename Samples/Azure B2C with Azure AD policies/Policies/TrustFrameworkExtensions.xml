@@ -119,10 +119,11 @@
             <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>
             <Item Key="language.button_continue">Continue</Item>
             <Item Key="UserMessageIfClaimsTransformationStringsAreNotEqual">The account you are trying to create already exists, please sign-in instead.</Item>
+            <Item Key="SignUpTarget">LocalAccount_SignUpAfterEmailVerification</Item>
           </Metadata>
-          <DisplayClaims>
-            <DisplayClaim DisplayControlReferenceId="emailVerificationControl" />
-          </DisplayClaims>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="email" />
+          </InputClaims>
           <OutputClaims>
             <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="Verified.Email" Required="true" />
             <OutputClaim ClaimTypeReferenceId="authenticationSource" DefaultValue="localAccountAuthentication" />
@@ -272,35 +273,33 @@
           </ClaimsExchanges>
         </OrchestrationStep>
 
-        <!-- 2. If the user signed in using a local account, redirect to the LocalSignIn subjourney to simplify preconditions -->
-        <OrchestrationStep Order="2" Type="InvokeSubJourney">
+        <!-- 2. Redirect to the appropriate exchange -->
+        <OrchestrationStep Order="2" Type="ClaimsExchange">
           <Preconditions>
-            <!-- Only execute this if the user signed in successfully -->
-            <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
+            <!-- Only execute this if the user has not already signed in successfully -->
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
               <Value>objectId</Value>
               <Action>SkipThisOrchestrationStep</Action>
             </Precondition>
           </Preconditions>
-          <JourneyList>
-            <Candidate SubJourneyReferenceId="LocalSignIn" />
-          </JourneyList>
-        </OrchestrationStep>
-        
-        <!-- 3. Redirect to the appropriate exchange -->
-        <OrchestrationStep Order="3" Type="ClaimsExchange">
           <ClaimsExchanges>
             <!-- If user selected local sign up, invoke the email verification screen -->
             <ClaimsExchange Id="LocalAccountSignUp_EmailVerification" TechnicalProfileReferenceId="LocalAccount_EmailVerification" />
             <!-- If user selected AAD sign in, invoke this -->
-            <ClaimsExchange Id="AADExchange" TechnicalProfileReferenceId="{YOUR_TENANT}-OAuth" />
+            <ClaimsExchange Id="AADExchange" TechnicalProfileReferenceId="CT-OAuth" />
             <!-- If the user selected the forgot password link, invoke this -->
             <ClaimsExchange Id="ForgotPasswordExchange" TechnicalProfileReferenceId="ForgotPassword" />
           </ClaimsExchanges>
         </OrchestrationStep>
 
-        <!-- 4. If the user selected the AAD sign in, redirect to the AAD subjourney -->
-        <OrchestrationStep Order="4" Type="InvokeSubJourney">
+        <!-- 3. If the user selected the AAD sign in, redirect to the AAD subjourney -->
+        <OrchestrationStep Order="3" Type="InvokeSubJourney">
           <Preconditions>
+            <!-- Do not execute this if the user already signed in -->
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+              <Value>objectId</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>           
             <!-- Skip if we don't have an authenticationSource value -->
             <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
               <Value>authenticationSource</Value>
@@ -318,9 +317,14 @@
           </JourneyList>
         </OrchestrationStep>
 
-        <!-- 5. If the user selected the forgot password link, redirect to the PasswordReset subjourney  -->
-        <OrchestrationStep Order="5" Type="InvokeSubJourney">
+        <!-- 4. If the user selected the forgot password link, redirect to the PasswordReset subjourney  -->
+        <OrchestrationStep Order="4" Type="InvokeSubJourney">
           <Preconditions>
+            <!-- Do not execute this if the user already signed in -->
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+              <Value>objectId</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>           
             <!-- Only execute this if we have the isForgotPassword claim -->
             <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
               <Value>isForgotPassword</Value>
@@ -332,12 +336,29 @@
           </JourneyList>
         </OrchestrationStep>
 
-        <!-- 6. If the user selected the local account sign up, redirect to the LocalSignUp subjourney -->
-        <OrchestrationStep Order="6" Type="InvokeSubJourney">
+        <!-- 5. If the user selected the local account sign up, redirect to the LocalSignUp subjourney -->
+        <OrchestrationStep Order="5" Type="InvokeSubJourney">
+          <Preconditions>
+            <!-- Do not execute this if the user already signed in -->
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+              <Value>objectId</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>          
+          </Preconditions>
           <JourneyList>
             <Candidate SubJourneyReferenceId="LocalSignUp" />
           </JourneyList>
         </OrchestrationStep>
+
+        <!-- 6. Get the user's data using the Object ID -->
+        <OrchestrationStep Order="6" Type="ClaimsExchange">
+          <ClaimsExchanges>
+              <ClaimsExchange Id="AADUserReadWithObjectId" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- 7. Return the resulting claims to the application -->
+        <OrchestrationStep Order="7" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />        
       </OrchestrationSteps>
       <ClientDefinition ReferenceId="DefaultWeb" />
     </UserJourney>
@@ -377,20 +398,6 @@
 
         <!-- 4. Return the resulting claims to the application -->
         <OrchestrationStep Order="4" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
-      </OrchestrationSteps>
-    </SubJourney>
-
-    <SubJourney Id="LocalSignIn" Type="Transfer">
-      <OrchestrationSteps>
-        <!-- 1.. Get the user's data using the Object ID -->
-        <OrchestrationStep Order="1" Type="ClaimsExchange">
-          <ClaimsExchanges>
-              <ClaimsExchange Id="AADUserReadWithObjectId" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
-          </ClaimsExchanges>
-        </OrchestrationStep>
-
-        <!-- 2.. Return the resulting claims to the application -->
-        <OrchestrationStep Order="2" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
       </OrchestrationSteps>
     </SubJourney>
 
