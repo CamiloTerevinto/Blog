@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <TrustFrameworkPolicy
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -286,7 +286,7 @@
             <!-- If user selected local sign up, invoke the email verification screen -->
             <ClaimsExchange Id="LocalAccountSignUp_EmailVerification" TechnicalProfileReferenceId="LocalAccount_EmailVerification" />
             <!-- If user selected AAD sign in, invoke this -->
-            <ClaimsExchange Id="AADExchange" TechnicalProfileReferenceId="CT-OAuth" />
+            <ClaimsExchange Id="AADExchange" TechnicalProfileReferenceId="{YOUR_TENANT}-OAuth" />
             <!-- If the user selected the forgot password link, invoke this -->
             <ClaimsExchange Id="ForgotPasswordExchange" TechnicalProfileReferenceId="ForgotPassword" />
           </ClaimsExchanges>
