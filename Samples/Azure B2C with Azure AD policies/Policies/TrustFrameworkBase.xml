@@ -495,28 +495,6 @@
       </ContentDefinition>
 
     </ContentDefinitions>
-
-    <DisplayControls>
-      <DisplayControl Id="emailVerificationControl" UserInterfaceControlType="VerificationControl">
-        <DisplayClaims>
-          <DisplayClaim ClaimTypeReferenceId="email" Required="true" />
-          <DisplayClaim ClaimTypeReferenceId="verificationCode" ControlClaimType="VerificationCode" Required="true" />
-        </DisplayClaims>
-        <OutputClaims></OutputClaims>
-        <Actions>
-          <Action Id="SendCode">
-            <ValidationClaimsExchange>
-              <ValidationClaimsExchangeTechnicalProfile TechnicalProfileReferenceId="AadSspr-SendCode" />
-            </ValidationClaimsExchange>
-          </Action>
-          <Action Id="VerifyCode">
-            <ValidationClaimsExchange>
-              <ValidationClaimsExchangeTechnicalProfile TechnicalProfileReferenceId="AadSspr-VerifyCode" />
-            </ValidationClaimsExchange>
-          </Action>
-        </Actions>
-      </DisplayControl>
-    </DisplayControls>
   </BuildingBlocks>
 
   <!--
@@ -1181,36 +1159,17 @@
           </ClaimsExchanges>
         </OrchestrationStep>
         <OrchestrationStep Order="3" Type="ClaimsExchange">
-          <Preconditions>
-            <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
-              <Value>authenticationSource</Value>
-              <Value>localAccountAuthentication</Value>
-              <Action>SkipThisOrchestrationStep</Action>
-            </Precondition>
-          </Preconditions>
-          <ClaimsExchanges>
-            <ClaimsExchange Id="AADUserRead" TechnicalProfileReferenceId="AAD-UserReadUsingAlternativeSecurityId" />
-          </ClaimsExchanges>
-        </OrchestrationStep>
-        <OrchestrationStep Order="4" Type="ClaimsExchange">
-          <Preconditions>
-            <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
-              <Value>authenticationSource</Value>
-              <Value>socialIdpAuthentication</Value>
-              <Action>SkipThisOrchestrationStep</Action>
-            </Precondition>
-          </Preconditions>
           <ClaimsExchanges>
             <ClaimsExchange Id="AADUserReadWithObjectId" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
           </ClaimsExchanges>
         </OrchestrationStep>
 
-        <OrchestrationStep Order="5" Type="ClaimsExchange">
+        <OrchestrationStep Order="4" Type="ClaimsExchange">
           <ClaimsExchanges>
             <ClaimsExchange Id="B2CUserProfileUpdateExchange" TechnicalProfileReferenceId="SelfAsserted-ProfileUpdate" />
           </ClaimsExchanges>
         </OrchestrationStep>
-        <OrchestrationStep Order="6" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+        <OrchestrationStep Order="5" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
 
       </OrchestrationSteps>
       <ClientDefinition ReferenceId="DefaultWeb" />

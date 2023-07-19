@@ -5,7 +5,7 @@
   xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06"
   PolicySchemaVersion="0.3.0.0"
   TenantId="{YOUR_TENANT}.onmicrosoft.com"
-  PolicyId="B2C_1A_hdr_signup_signin"
+  PolicyId="B2C_1A_signup_signin"
   PublicPolicyUri="http://{YOUR_TENANT}.onmicrosoft.com/B2C_1A_signup_signin"
   DeploymentMode="Development"
   UserJourneyRecorderEndpoint="urn:journeyrecorder:applicationinsights">
