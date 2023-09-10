@@ -7,13 +7,13 @@ param privateEndpointPrefixName = ''
 param privateEndpointsData = [
   {
     privateDnsZoneName: 'privatelink.blob.core.windows.net'
-    privateDnsZoneLinkName: 'ct-conn-uks-vnetlink-blob'
+    privateDnsZoneLinkName: 'vnetlink-blob'
     resourceIds: [ 'YourBlobStorageAccountId' ]
     groupIds: [ 'blob' ]
   }
   {
     privateDnsZoneName: 'privatelink.vaultcore.azure.net'
-    privateDnsZoneLinkName: 'ct-conn-uks-vnetlink-kv'
+    privateDnsZoneLinkName: 'vnetlink-kv'
     resourceIds: [ 'YourKeyVaultId1', 'YourKeyVaultId2' ]
     groupIds: [ 'vault' ]
   }

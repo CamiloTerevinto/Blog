@@ -1,27 +1,19 @@
-param tags object
-
-param location string
-
 param privateDnsZoneName string
-
 param privateDnsZoneLinkName string
-
 param vnetId string
-
 param privateEndpointName string
-
 param subnetId string
-
 param resourceIds string[]
-
 param groupIds string[]
+param location string
+param tags object
 
 resource privateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
   name: privateDnsZoneName
   tags: tags
   location: 'global'
 
-  resource link 'virtualNetworkLinks@2020-06-01' = {
+  resource link 'virtualNetworkLinks' = {
     name: privateDnsZoneLinkName
     tags: tags
     location: 'global'
