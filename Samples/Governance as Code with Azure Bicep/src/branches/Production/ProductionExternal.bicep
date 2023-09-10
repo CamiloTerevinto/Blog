@@ -16,10 +16,14 @@ module productionExternalMg '../../components/ManagementGroup.bicep' = {
 
 module client1 '../../components/Subscription.bicep' = {
   name: 'Client1Sub'
+  scope: managementGroup('ProductionExternal')
   params: {
     billingScope: billingScope
     parentManagementGroupdId: productionExternalMg.outputs.id
     subscriptionName: 'Client1Sub'
     subscriptionWorkload: 'Production'
   }
+  dependsOn: [
+    productionExternalMg
+  ]
 }

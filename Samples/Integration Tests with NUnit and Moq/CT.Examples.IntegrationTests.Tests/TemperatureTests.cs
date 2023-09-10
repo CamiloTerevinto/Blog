@@ -20,7 +20,7 @@ namespace CT.Examples.IntegrationTests.Tests
             var response = await client.GetAsync("/weatherforecast/temperature");
             var responseMessage = await response.Content.ReadAsStringAsync();
 
-            Assert.AreEqual(expected, responseMessage);
+            Assert.That(responseMessage, Is.EqualTo(expected));
             ExternalServicesMock.TemperatureApiClient.Verify(x => x.GetTemperatureAsync(), Times.Once);
         }
     }
