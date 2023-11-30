@@ -1,20 +1,11 @@
 @description('Resource group location')
-param rgLocation string
-
-@description('VNET resource name')
-param vnetName string
+param rgLocation string = resourceGroup().location
 
 @description('VNET Address Space (CIDR notation, /23 or greater)')
-param vnetAddressSpace string = '10.0.0.0/22'
-
-@description('Subnet resource name')
-param containerAppSubnetName string
+param vnetAddressSpace string
 
 @description('Subnet Address Prefix (CIDR notation, /23 or greater)')
-param subnetAddressPrefix string = '10.0.0.0/23'
-
-@description('Log Analytics resource name')
-param cappLogAnalyticsName string
+param containerAppSubnetAddressPrefix string
 
 @description('Docker Registry URL')
 param dockerRegistryUrl string
@@ -26,265 +17,83 @@ param dockerRegistryUsername string
 @description('Docker Registry password')
 param dockerRegistryPassword string
 
-@description('Container Apps Environment resource name')
-param cappEnvName string
-
-@description('Public API Container App resource name')
-param publicApiCappName string
-
 @description('Public API Docker image name')
 param publicApiImageName string
-
-@description('Query API Container App resource name')
-param queryApiCappName string
 
 @description('Query API Docker image name')
 param queryApiImageName string
 
-@description('Command API Container App resource name')
-param commandApiCappName string
-
 @description('Command API Docker image name')
 param commandApiImageName string
-
-@description('Processor Container App resource name')
-param processorCappName string
 
 @description('Processor Docker image name')
 param processorImageName string
 
-@description('Storage Account resource name')
-param storageAccountName string
+@description('The name of the company for resource names')
+param companyName string
 
-resource vnet 'Microsoft.Network/virtualNetworks@2022-01-01' = {
-  name: vnetName
-  location: rgLocation
-  properties: {
-    addressSpace: {
-      addressPrefixes: [ vnetAddressSpace ]
-    }
-  }
+@description('The name of the product for resource names')
+param productName string
 
-  resource subnet 'subnets@2022-01-01' = {
-    name: containerAppSubnetName
-    properties: {
-      addressPrefix: subnetAddressPrefix
-      serviceEndpoints: [
-        {
-          service: 'Microsoft.Storage'
-          locations: [ rgLocation ]
-        }
-      ]
-    }
+@description('The name of the region for resource names')
+param regionName string
+
+@description('The name of the region for resource names')
+param environmentName string
+
+var deploymentPrefix = '[Company].[Product].Bicep-[version]'
+
+// Naming convention: {company}-{product}-{environment}-{region}-{component}-[identifier]
+// Example: ct-blog-prod-neu-subnet-app
+// Identifier is optional, to disambiguate between components.
+var componentsDashedPrefix = '${companyName}-${productName}-${environmentName}-${regionName}-'
+
+// Naming convention for resources that don't support dashes
+var componentsPrefix = '${companyName}${productName}${environmentName}${regionName}'
+
+module vnet 'Components/Networking.bicep' = {
+  name: '${deploymentPrefix}-Network'
+  params: {
+    rgLocation: rgLocation
+    vnetName: '${componentsDashedPrefix}vnet'
+    vnetAddressSpace: vnetAddressSpace
+    containerAppSubnetName: '${componentsDashedPrefix}subnet-app'
+    containerAppSubnetAddressPrefix: containerAppSubnetAddressPrefix
   }
 }
 
-resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
-  name: cappLogAnalyticsName
+resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
+  name: '${componentsDashedPrefix}law'
   location: rgLocation
   properties: {
     sku: { name: 'PerGB2018' }
   }
 }
 
-resource containerAppEnvironment 'Microsoft.App/managedEnvironments@2022-03-01' = {
-  location: rgLocation
-  name: cappEnvName
-  properties: {
-    appLogsConfiguration: {
-      destination: 'log-analytics'
-      logAnalyticsConfiguration: {
-        customerId: logAnalytics.properties.customerId
-        sharedKey: logAnalytics.listKeys().primarySharedKey
-      }
-    }
-    vnetConfiguration: {
-      infrastructureSubnetId: vnet::subnet.id
-    }
+module storageAccount 'Components/Storage.bicep' = {
+  name: '${deploymentPrefix}Storage'
+  params: {
+    rgLocation: rgLocation
+    storageAccountName: '${componentsPrefix}sa'
+    subnetId: vnet.outputs.subnetId
   }
 }
 
-resource publicApi 'Microsoft.App/containerApps@2022-03-01' = {
-  name: publicApiCappName
-  location: rgLocation
-  properties: {
-    managedEnvironmentId: containerAppEnvironment.id
-    configuration: {
-      secrets: [
-        {
-          name: 'registry-password'
-          value: dockerRegistryPassword
-        }
-      ]
-      registries: [
-        {
-          passwordSecretRef: 'registry-password'
-          server: dockerRegistryUrl
-          username: dockerRegistryUsername
-        }
-      ]
-    }
-    template: {
-      containers: [
-        {
-          image: '${publicApiImageName}:latest'
-          env: [
-            {
-              name: 'MICROSERVICES__QUERY_URL'
-              value: queryApi.properties.configuration.ingress.fqdn
-            }
-            {
-              name: 'MICROSERVICES__COMMAND_URL'
-              value: commandApi.properties.configuration.ingress.fqdn
-            }
-          ]
-        }
-      ]
-      scale: {
-        maxReplicas: 1
-        minReplicas: 1
-      }
-    }
+module containerApps 'Components/ContainerApps.bicep' = {
+  name: '${deploymentPrefix}ContainerApps'
+  params: {
+    commandApiImageName: commandApiImageName
+    componentsDashedPrefix: componentsDashedPrefix
+    deploymentPrefix: deploymentPrefix
+    dockerRegistryPassword: dockerRegistryPassword
+    dockerRegistryUrl: dockerRegistryUrl
+    dockerRegistryUsername: dockerRegistryUsername
+    logAnalyticsWorkspaceName: '${componentsDashedPrefix}law'
+    processorImageName: processorImageName
+    publicApiImageName: publicApiImageName
+    queryApiImageName: queryApiImageName
+    rgLocation: rgLocation
+    storageAccountName: '${componentsPrefix}sa'
+    subnetId: vnet.outputs.subnetId
   }
 }
-
-resource queryApi 'Microsoft.App/containerApps@2022-03-01' = {
-  name: queryApiCappName
-  location: rgLocation
-  properties: {
-    managedEnvironmentId: containerAppEnvironment.id
-    configuration: {
-      secrets: [
-        {
-          name: 'registry-password'
-          value: dockerRegistryPassword
-        }
-      ]
-      registries: [
-        {
-          passwordSecretRef: 'registry-password'
-          server: dockerRegistryUrl
-          username: dockerRegistryUsername
-        }
-      ]
-      ingress: {
-        external: true
-        targetPort: 80
-      }
-    }
-    template: {
-      containers: [
-        {
-          image: '${queryApiImageName}:latest'
-          env: [
-          ]
-        }
-      ]
-      scale: {
-        maxReplicas: 1
-        minReplicas: 1
-      }
-    }
-  }
-}
-
-resource commandApi 'Microsoft.App/containerApps@2022-03-01' = {
-  name: commandApiCappName
-  location: rgLocation
-  properties: {
-    managedEnvironmentId: containerAppEnvironment.id
-    configuration: {
-      secrets: [
-        {
-          name: 'registry-password'
-          value: dockerRegistryPassword
-        }
-        {
-          name: 'storage-connection-string'
-          value: blobStorageConnectionString
-        }
-      ]
-      registries: [
-        {
-          passwordSecretRef: 'registry-password'
-          server: dockerRegistryUrl
-          username: dockerRegistryUsername
-        }
-      ]
-    }
-    template: {
-      containers: [
-        {
-          image: '${commandApiImageName}:latest'
-          env: [
-            {
-              name: 'SERVICES__STORAGE_CONNECTION_STRING'
-              secretRef: 'storage-connection-string'
-            }
-          ]
-        }
-      ]
-      scale: {
-        maxReplicas: 1
-        minReplicas: 1
-      }
-    }
-  }
-}
-
-resource processor 'Microsoft.App/containerApps@2022-03-01' = {
-  name: processorCappName
-  location: rgLocation
-  properties: {
-    managedEnvironmentId: containerAppEnvironment.id
-    configuration: {
-      secrets: [
-        {
-          name: 'registry-password'
-          value: dockerRegistryPassword
-        }
-      ]
-      registries: [
-        {
-          passwordSecretRef: 'registry-password'
-          server: dockerRegistryUrl
-          username: dockerRegistryUsername
-        }
-      ]
-    }
-    template: {
-      containers: [
-        {
-          image: '${processorImageName}:latest'
-        }
-      ]
-      scale: {
-        maxReplicas: 1
-        minReplicas: 1
-      }
-    }
-  }
-}
-
-resource storageAccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
-  name: storageAccountName
-  location: rgLocation
-  kind: 'StorageV2'
-  sku: {
-    name: 'Standard_LRS'
-  }
-  properties: {
-    networkAcls: {
-      defaultAction: 'Deny'
-      bypass: 'AzureServices'
-      virtualNetworkRules: [
-        {
-          id: vnet::subnet.id
-          action: 'Allow'
-        }
-      ]
-    }
-  }
-}
-
-var blobStorageConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'

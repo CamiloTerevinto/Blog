@@ -1,0 +1,16 @@
+using './main.bicep'
+
+param vnetAddressSpace = '10.0.0.0/22'
+param containerAppSubnetAddressPrefix = '10.0.0.0/23'
+param dockerRegistryUrl = ''
+param dockerRegistryUsername = ''
+param dockerRegistryPassword = ''
+param publicApiImageName = ''
+param queryApiImageName = ''
+param commandApiImageName = ''
+param processorImageName = ''
+param companyName = ''
+param productName = ''
+param regionName = ''
+param environmentName = ''
+
