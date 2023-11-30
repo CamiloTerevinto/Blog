@@ -25,7 +25,7 @@ namespace CT.Examples.CustomApiKeys.Services
                 _memoryCache.Set("Authentication_ApiKeys", internalKeys, _cacheKeysTimeToLive);
             }
 
-            if (!internalKeys.TryGetValue(apiKey, out var clientId))
+            if (!internalKeys!.TryGetValue(apiKey, out var clientId))
             {
                 return null;
             }
@@ -37,11 +37,8 @@ namespace CT.Examples.CustomApiKeys.Services
         {
             if (_memoryCache.TryGetValue<Dictionary<string, Guid>>("Authentication_ApiKeys", out var internalKeys))
             {
-                if (internalKeys.ContainsKey(apiKey))
-                {
-                    internalKeys.Remove(apiKey);
-                    _memoryCache.Set("Authentication_ApiKeys", internalKeys);
-                }
+                internalKeys!.Remove(apiKey);
+                _memoryCache.Set("Authentication_ApiKeys", internalKeys);
             }
 
             await _clientsService.InvalidateApiKey(apiKey);
