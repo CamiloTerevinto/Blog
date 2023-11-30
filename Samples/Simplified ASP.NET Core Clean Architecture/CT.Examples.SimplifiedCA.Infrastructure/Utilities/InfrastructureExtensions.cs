@@ -12,7 +12,7 @@ public static class InfrastructureExtensions
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        var dbOptions = configuration.GetRequiredSection("Database").Get<WeatherDbOptions>();
+        var dbOptions = configuration.GetRequiredSection("Database").Get<WeatherDbOptions>() ?? throw new InvalidOperationException("Missing Database configuration");
         dbOptions.Validate();
 
         services.AddDbContext<SimplifiedCAContext>(opt =>
@@ -23,7 +23,7 @@ public static class InfrastructureExtensions
             opt.UseSqlServer(connectionString);
         });
 
-        var weatherApiOptions = configuration.GetRequiredSection("WeatherApi").Get<WeatherApiOptions>();
+        var weatherApiOptions = configuration.GetRequiredSection("WeatherApi").Get<WeatherApiOptions>() ?? throw new InvalidOperationException("Missing WeatherApi configuration");
         weatherApiOptions.Validate();
 
             // Note: this is just a random example of an "Infrastructure" service - i.e. a service that consumes/facilitates consuming 3rd party services/APIs/etc.

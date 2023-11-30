@@ -72,7 +72,7 @@ internal class WeatherService : IWeatherService
             Latitude = latitude,
             Longitude = longitude,
             Temperature = weatherAnalyticsData.Temperature,
-            Unit = weatherAnalyticsData.Unit
+            Unit = weatherAnalyticsData.Unit ?? ""
         };
     }
 }
