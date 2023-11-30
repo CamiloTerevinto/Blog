@@ -2,7 +2,7 @@
 {
     public class CallApiExampleData
     {
-        public string Url { get; set; }
-        public string SomeOtherImportantData { get; set; }
+        public string Url { get; set; } = default!;
+        public string SomeOtherImportantData { get; set; } = default!;
     }
 }

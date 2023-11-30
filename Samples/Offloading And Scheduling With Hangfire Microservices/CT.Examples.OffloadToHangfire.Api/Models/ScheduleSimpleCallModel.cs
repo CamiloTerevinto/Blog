@@ -5,6 +5,6 @@ namespace CT.Examples.OffloadToHangfire.Api.Models
     public class ScheduleSimpleCallModel
     {
         [Required]
-        public string SomeImportantData { get; set; }
+        public string SomeImportantData { get; set; } = default!;
     }
 }
