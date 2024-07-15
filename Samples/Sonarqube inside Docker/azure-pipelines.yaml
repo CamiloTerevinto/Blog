@@ -1,0 +1,71 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+- group: SonarqubeConfiguration
+- name: tag
+  value: '$(Build.BuildId)'
+- name: imageName
+  value: 'ct-examples-sonarqube'
+- name: acrName
+  value: ''
+- name: sourceBranchName
+  value: ${{replace(variables['Build.SourceBranch'], 'refs/heads/', '')}}
+- name: sonarqubeProjectKey
+  value: ${{ lower(variables['Build.Repository.Name']) }}
+- name: sharedSonarqubeArguments
+  value : 'sonarqubecmd=dotnet sonarscanner begin /k:$(sonarqubeProjectKey) /o:$(SonarqubeOrganization) /d:sonar.host.url=$(SonarqubeUrl) /d:sonar.token=$(SonarqubeToken) /d:sonar.cs.vstest.reportsPaths=/testresults/**/.trx /d:sonar.cs.opencover.reportsPaths=/testresults/**/coverage.opencover.xml'
+
+steps:
+- task: Docker@2
+  displayName: Build an image
+  inputs:
+    command: build
+    dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+    ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+      arguments: '--build-arg "$(sharedSonarqubeArguments) /d:sonar.pullrequest.key=$(System.PullRequest.PullRequestId) /d:sonar.pullrequest.branch=$(sourceBranchName) /d:sonar.pullrequest.base=$(System.PullRequest.TargetBranchName) /d:sonar.pullrequest.provider=vsts" --build-arg SonarqubeToken=$(SonarqubeToken)'
+    ${{ else }}:
+      arguments: '--build-arg "$(sharedSonarqubeArguments) /d:sonar.branch.name=$(sourceBranchName)" --build-arg SonarqubeToken=$(SonarqubeToken)'
+    repository: '$(imageName)'
+    tags: $(tag)
+
+- task: PowerShell@2
+  displayName: 'Copy test results'
+  inputs:
+    targetType: 'inline'
+    script: |
+      $currentImageName = "$(imageName):$(Build.BuildId)"
+      $id=docker images -q $currentImageName | Select-Object -First 1
+
+      docker create --name testcontainer $id
+      docker cp testcontainer:/app/testresults ./testresults
+      docker rm testcontainer
+
+- task: PublishTestResults@2
+  displayName: 'Store test results'
+  inputs:
+    testResultsFormat: 'VSTest'
+    testResultsFiles: '**/*.trx'
+    searchFolder: '$(System.DefaultWorkingDirectory)/testresults'
+    failTaskOnFailedTests: true
+    failTaskOnFailureToPublishResults: true
+    failTaskOnMissingResultsFile: true
+
+- task: PublishCodeCoverageResults@2
+  displayName: 'Publish code coverage results to ADO'
+  inputs:
+    summaryFileLocation: $(System.DefaultWorkingDirectory)/testresults/*([a-f]|[0-9])**/coverage.cobertura.xml
+    pathToSources: '$(System.DefaultWorkingDirectory)'
+    failIfCoverageEmpty: true
+
+- task: Docker@2
+  displayName: Publish the Docker image
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'))
+  inputs:
+    containerRegistry: '$(acrName)'
+    repository: '$(imageName)'
+    command: 'push'
+    tags: $(tag)
